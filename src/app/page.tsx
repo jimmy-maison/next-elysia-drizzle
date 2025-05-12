@@ -51,12 +51,11 @@ const techStack = [
   }
 ];
 
-// Komponente für die Parallax-Sektionen
 const ParallaxSection = ({ tech }: { tech: typeof techStack[0] }) => {
   const targetRef = useRef<HTMLDivElement | null>(null);
   const { scrollYProgress } = useScroll({
     target: targetRef,
-    offset: ['start end', 'end start'] // Animate when section is in viewport
+    offset: ['start end', 'end start'] 
   });
 
   const opacity = useTransform(scrollYProgress, [0, 0.3, 0.7, 1], [0, 1, 1, 0]);
@@ -68,7 +67,7 @@ const ParallaxSection = ({ tech }: { tech: typeof techStack[0] }) => {
     <motion.section 
       ref={targetRef} 
       className="min-h-[70vh] py-20 px-4 md:px-8 flex flex-col md:flex-row items-center justify-center gap-12 relative overflow-hidden"
-      style={{ y, opacity, scale }} // Direkt hier anwenden, anstatt auf innerem div
+      style={{ y, opacity, scale }} 
     >
       <motion.div className="md:w-1/2 space-y-6">
         <h2 className="text-5xl md:text-6xl font-bold mb-4" style={{ color: tech.color }}>{tech.name}</h2>
@@ -103,7 +102,6 @@ const ParallaxSection = ({ tech }: { tech: typeof techStack[0] }) => {
       >
         <TechIcon className="w-48 h-48 md:w-64 md:h-64 opacity-80 group-hover:opacity-100 transition-opacity duration-300" style={{ color: tech.color }} />
       </motion.div>
-       {/* Decorative background element */}
        <div 
         className="absolute -z-10 top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-96 h-96 md:w-[600px] md:h-[600px] rounded-full opacity-10"
         style={{ backgroundColor: tech.color }}
@@ -119,11 +117,10 @@ const Page = () => {
     navigator.clipboard.writeText("npx create ned-app")
       .then(() => {
         setNpmCopied(true);
-        setTimeout(() => setNpmCopied(false), 2000); // Reset after 2 seconds
+        setTimeout(() => setNpmCopied(false), 2000); 
       })
       .catch(err => {
         console.error("Failed to copy: ", err);
-        // Optional: Add user feedback for error here
       });
   };
 
@@ -152,10 +149,8 @@ const Page = () => {
 
   const cardHoverVariants = {
     hover: {
-      scale: 1.03, // Etwas subtiler
-      boxShadow: "0px 15px 35px -10px rgba(0, 0, 0, 0.4)", // Weicherer, größerer Schatten
-      // rotateY: 5, // Leichte 3D-Neigung für weniger "Viereckigkeit"
-      // borderColor: "rgba(255, 255, 255, 0.2)", // Leichter Rand beim Hover
+      scale: 1.03,
+      boxShadow: "0px 15px 35px -10px rgba(0, 0, 0, 0.4)", 
       transition: { duration: 0.3, type: "spring", stiffness: 200, damping: 15 }
     }
   };
@@ -198,10 +193,10 @@ const Page = () => {
             const TechIcon = tech.icon; 
             return (
               <motion.div
-                key={tech.id} // ID als Key verwenden
+                key={tech.id} 
                 className="group bg-gray-800 bg-opacity-60 backdrop-blur-md p-8 rounded-2xl shadow-2xl border border-gray-700 flex flex-col items-center text-center cursor-pointer transform transition-all duration-300" // Rounded-2xl für weichere Ecken, group für Icon hover
                 variants={itemVariants}
-                whileHover="hover" // Hier wird cardHoverVariants angewendet
+                whileHover="hover" 
               >
                 <TechIcon className="w-12 h-12 mb-4 group-hover:scale-110 transition-transform duration-300" style={{ color: tech.color }}/>
                 <h3 className={`text-3xl font-bold mb-3`} style={{ color: tech.color }}>{tech.name}</h3>
@@ -211,16 +206,14 @@ const Page = () => {
           })}
         </motion.section>
 
-        {/* NPM Install Command */}
         <motion.div 
-          initial={{ opacity: 0, y: 20 }} // Startet leicht von unten für besseren Effekt
+          initial={{ opacity: 0, y: 20 }} 
           animate={{ opacity: 1, y: 0}}
-          transition={{ duration: 0.5, delay: techStack.length * 0.2 + 0.6 }} // Delay leicht angepasst
-          className="mb-16 md:mb-20 w-full max-w-md md:max-w-lg" // Margin Bottom angepasst
+          transition={{ duration: 0.5, delay: techStack.length * 0.2 + 0.6 }} 
         >
           <div
             className="font-mono text-left bg-gray-800 border border-gray-700 rounded-lg p-4 shadow-2xl cursor-pointer hover:border-pink-500 transition-colors duration-300 flex items-center justify-between group relative"
-            onClick={handleNpmCopy} // Geänderter onClick Handler
+            onClick={handleNpmCopy}
           >
             <div>
               <span className="text-green-400">$</span> <span className="text-gray-300">npx create ned-app</span>
@@ -231,13 +224,10 @@ const Page = () => {
             >
               {npmCopied ? <FaCheck className="w-5 h-5 text-green-500" /> : <FaRegCopy className="w-5 h-5" />}
             </button>
-            {/* Tooltip für Kopierstatus - Optional, da Icon sich ändert */}
-            {/* {npmCopied && <span className="absolute -top-8 right-0 text-xs bg-green-500 text-white px-2 py-1 rounded shadow-lg">Copied!</span>} */}
           </div>
         </motion.div>
         
-        {/* Parallax Sections für jedes Tech-Element */}
-        <div className="w-full max-w-7xl mx-auto mt-12 md:mt-16"> {/* Margin Top angepasst */}
+        <div className="w-full max-w-7xl mx-auto mt-12 md:mt-16"> 
           {techStack.map((tech) => (
             <ParallaxSection key={`parallax-${tech.id}`} tech={tech} />
           ))}
