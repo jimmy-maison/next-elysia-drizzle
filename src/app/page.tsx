@@ -59,19 +59,22 @@ const ParallaxSection = ({ tech }: { tech: typeof techStack[0] }) => {
   });
 
   const opacity = useTransform(scrollYProgress, [0, 0.3, 0.7, 1], [0, 1, 1, 0]);
-  const y = useTransform(scrollYProgress, [0, 0.3, 0.7, 1], [100, 0, 0, -100]);
+  const y = useTransform(scrollYProgress, [0, 0.3, 0.7, 1], [50, 0, 0, -50]);
   const scale = useTransform(scrollYProgress, [0, 0.3], [0.8, 1]);
+  const rotate = useTransform(scrollYProgress, [0, 1], [0, 15]);
+  const x = useTransform(scrollYProgress, [0, 1], [-50, 50]);
+  const bgScale = useTransform(scrollYProgress, [0, 0.5, 1], [0.8, 1.2, 0.8]);
   const TechIcon = tech.icon; 
 
   return (
     <motion.section 
       ref={targetRef} 
-      className="min-h-[70vh] py-20 px-4 md:px-8 flex flex-col md:flex-row items-center justify-center gap-12 relative overflow-hidden"
-      style={{ y, opacity, scale }} 
+      className="min-h-[60vh] md:min-h-[70vh] py-16 md:py-20 px-4 sm:px-6 md:px-8 flex flex-col md:flex-row items-center justify-center gap-8 md:gap-12 relative overflow-hidden"
+      style={{ y, opacity, scale, x }}
     >
-      <motion.div className="md:w-1/2 space-y-6">
-        <h2 className="text-5xl md:text-6xl font-bold mb-4" style={{ color: tech.color }}>{tech.name}</h2>
-        <p className="text-lg text-gray-300 leading-relaxed">
+      <motion.div className="md:w-1/2 space-y-4 md:space-y-6">
+        <h2 className="text-4xl sm:text-5xl md:text-6xl font-bold mb-4" style={{ color: tech.color }}>{tech.name}</h2>
+        <p className="text-base sm:text-lg text-gray-300 leading-relaxed">
           {tech.longDescription}
         </p>
         <div className="mt-6">
@@ -86,8 +89,8 @@ const ParallaxSection = ({ tech }: { tech: typeof techStack[0] }) => {
                 viewport={{ once: true, amount: 0.5 }}
                 transition={{ delay: i * 0.1 + 0.5 }}
               >
-                <svg className="w-5 h-5 mr-3 shrink-0" style={{ color: tech.color }} fill="currentColor" viewBox="0 0 20 20" xmlns="http://www.w3.org/2000/svg"><path fillRule="evenodd" d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z" clipRule="evenodd"></path></svg>
-                {adv}
+                <svg className="w-4 h-4 sm:w-5 sm:h-5 mr-2 sm:mr-3 shrink-0" style={{ color: tech.color }} fill="currentColor" viewBox="0 0 20 20" xmlns="http://www.w3.org/2000/svg"><path fillRule="evenodd" d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z" clipRule="evenodd"></path></svg>
+                <span className="text-sm sm:text-base">{adv}</span>
               </motion.li>
             ))}
           </ul>
@@ -99,12 +102,13 @@ const ParallaxSection = ({ tech }: { tech: typeof techStack[0] }) => {
         whileInView={{ opacity: 1, scale: 1 }}
         viewport={{ once: true, amount: 0.3 }}
         transition={{ duration: 0.5, delay: 0.3 }}
+        style={{ rotate }}
       >
-        <TechIcon className="w-48 h-48 md:w-64 md:h-64 opacity-80 group-hover:opacity-100 transition-opacity duration-300" style={{ color: tech.color }} />
+        <TechIcon className="w-32 h-32 sm:w-48 sm:h-48 md:w-64 md:h-64 opacity-80 group-hover:opacity-100 transition-opacity duration-300" style={{ color: tech.color }} />
       </motion.div>
-       <div 
-        className="absolute -z-10 top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-96 h-96 md:w-[600px] md:h-[600px] rounded-full opacity-10"
-        style={{ backgroundColor: tech.color }}
+       <motion.div
+        className="absolute -z-10 top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-64 h-64 sm:w-96 sm:h-96 md:w-[600px] md:h-[600px] rounded-full opacity-10"
+        style={{ backgroundColor: tech.color, scale: bgScale }}
       />
     </motion.section>
   );
@@ -136,13 +140,15 @@ const Page = () => {
   };
 
   const itemVariants = {
-    hidden: { y: 20, opacity: 0 },
+    hidden: { y: 30, opacity: 0, scale: 0.9 },
     visible: {
       y: 0,
       opacity: 1,
+      scale: 1,
       transition: {
         type: 'spring',
-        stiffness: 100,
+        stiffness: 80,
+        damping: 15
       },
     },
   };
@@ -155,14 +161,33 @@ const Page = () => {
     }
   };
 
+  const cardHoverWithTiltVariants = {
+    hover: (color: string) => ({
+      scale: 1.05,
+      rotateX: 6,
+      rotateY: 10,
+      boxShadow: `0px 15px 30px -10px ${color}55`,
+      borderColor: color,
+      transition: { duration: 0.2, type: "spring", stiffness: 200, damping: 12 }
+    }),
+    rest: {
+      scale: 1,
+      rotateX: 0,
+      rotateY: 0,
+      boxShadow: "0px 8px 15px -3px rgba(0, 0, 0, 0.1), 0px 4px 6px -2px rgba(0, 0, 0, 0.05)",
+      borderColor: "rgba(255, 255, 255, 0.1)",
+      transition: { duration: 0.3, type: "spring", stiffness: 100, damping: 15 }
+    }
+  };
+
   return (
-    <div className="min-h-screen bg-gradient-to-br from-gray-900 via-purple-900 to-gray-900 text-white flex flex-col items-center p-4 selection:bg-pink-500 selection:text-white overflow-x-hidden">
-      <header className="absolute top-0 left-0 p-4 md:p-8 w-full flex justify-between items-center z-50">
+    <div className="min-h-screen bg-gradient-to-br from-gray-900 via-purple-900 to-gray-900 text-white flex flex-col items-center p-4 selection:bg-pink-500 selection:text-white overflow-x-hidden animate-gradient-xy">
+      <header className="absolute top-0 left-0 p-4 md:p-8 w-full flex justify-between items-center z-50 backdrop-blur-sm bg-gray-900/30">
         <motion.h1 
           initial={{ opacity: 0, x: -50 }}
           animate={{ opacity: 1, x: 0 }}
           transition={{ duration: 0.5, delay: 0.2 }}
-          className="text-2xl md:text-4xl font-bold tracking-tight"
+          className="text-xl sm:text-2xl md:text-4xl font-bold tracking-tight"
         >
           Next <span className="text-blue-400">•</span> Elysia <span className="text-yellow-400">•</span> Drizzle
         </motion.h1>
@@ -175,16 +200,16 @@ const Page = () => {
           transition={{ duration: 0.7, delay: 0.5, type: 'spring', stiffness: 50 }}
           className="mb-12 md:mb-20"
         >
-          <h2 className="text-5xl md:text-7xl font-extrabold mb-4 leading-tight">
+          <h2 className="text-4xl sm:text-5xl md:text-7xl font-extrabold mb-3 sm:mb-4 leading-tight">
             Build <span className="text-transparent bg-clip-text bg-gradient-to-r from-purple-400 to-pink-500">Awesome</span> Full-Stack Apps.
           </h2>
-          <p className="text-lg md:text-xl text-gray-300 max-w-3xl mx-auto">
+          <p className="text-base sm:text-lg md:text-xl text-gray-300 max-w-xs sm:max-w-md md:max-w-3xl mx-auto">
             Unleash the combined power of Next.js, ElysiaJS, and Drizzle ORM for unparalleled performance and developer experience.
           </p>
         </motion.div>
 
         <motion.section
-          className="grid grid-cols-1 md:grid-cols-3 gap-8 max-w-6xl w-full mb-12 md:mb-16"
+          className="grid grid-cols-1 md:grid-cols-3 gap-6 md:gap-8 max-w-6xl w-full mb-12 md:mb-16 perspective-[1000px]"
           variants={containerVariants}
           initial="hidden"
           animate="visible"
@@ -193,14 +218,18 @@ const Page = () => {
             const TechIcon = tech.icon; 
             return (
               <motion.div
-                key={tech.id} 
-                className="group bg-gray-800 bg-opacity-60 backdrop-blur-md p-8 rounded-2xl shadow-2xl border border-gray-700 flex flex-col items-center text-center cursor-pointer transform transition-all duration-300" // Rounded-2xl für weichere Ecken, group für Icon hover
-                variants={itemVariants}
-                whileHover="hover" 
+                key={tech.id}
+                className="group bg-gray-800 p-6 md:p-8 rounded-xl shadow-lg flex flex-col items-center text-center cursor-pointer transform transition-all duration-300 border border-transparent"
+                variants={cardHoverWithTiltVariants}
+                whileHover="hover"
+                initial="rest"
+                custom={tech.color}
               >
-                <TechIcon className="w-12 h-12 mb-4 group-hover:scale-110 transition-transform duration-300" style={{ color: tech.color }}/>
-                <h3 className={`text-3xl font-bold mb-3`} style={{ color: tech.color }}>{tech.name}</h3>
-                <p className="text-gray-400 text-sm leading-relaxed">{tech.description}</p>
+                <motion.div whileHover={{ scale: 1.1, rotate: -4 }} transition={{ type: 'spring', stiffness: 300, damping: 10}}>
+                  <TechIcon className="w-10 h-10 sm:w-12 sm:h-12 mb-4 sm:mb-5 group-hover:scale-110 transition-transform duration-300" style={{ color: tech.color }}/>
+                </motion.div>
+                <h3 className={`text-2xl sm:text-3xl font-bold mb-2 sm:mb-3`} style={{ color: tech.color }}>{tech.name}</h3>
+                <p className="text-gray-300 text-xs sm:text-sm leading-relaxed px-1 sm:px-0">{tech.description}</p>
               </motion.div>
             );
           })}
@@ -212,17 +241,17 @@ const Page = () => {
           transition={{ duration: 0.5, delay: techStack.length * 0.2 + 0.6 }} 
         >
           <div
-            className="font-mono text-left bg-gray-800 border border-gray-700 rounded-lg p-4 shadow-2xl cursor-pointer hover:border-pink-500 transition-colors duration-300 flex items-center justify-between group relative"
+            className="font-mono text-xs sm:text-base text-left bg-gray-800 border border-gray-700 rounded-lg p-3 sm:p-4 shadow-xl sm:shadow-2xl cursor-pointer hover:border-pink-500 transition-colors duration-300 flex items-center justify-between group relative max-w-md sm:max-w-xl md:max-w-2xl mx-auto"
             onClick={handleNpmCopy}
           >
-            <div>
+            <div className="flex-grow overflow-x-auto whitespace-nowrap scrollbar-hide">
               <span className="text-green-400">$</span> <span className="text-gray-300">npx create-ned-tech test-project</span>
             </div>
             <button 
               aria-label={npmCopied ? "Copied" : "Copy to clipboard"} 
-              className="text-gray-400 hover:text-pink-400 transition-colors duration-200 p-1 -mr-1"
+              className="text-gray-400 hover:text-pink-400 transition-colors duration-200 p-1 -ml-1 sm:-mr-1 flex-shrink-0"
             >
-              {npmCopied ? <FaCheck className="w-5 h-5 text-green-500" /> : <FaRegCopy className="w-5 h-5" />}
+              {npmCopied ? <FaCheck className="w-4 h-4 sm:w-5 sm:h-5 text-green-500 animate-pulse" /> : <FaRegCopy className="w-4 h-4 sm:w-5 sm:h-5" />}
             </button>
           </div>
         </motion.div>
