@@ -114,7 +114,7 @@ const Page = () => {
   const [npmCopied, setNpmCopied] = useState(false);
 
   const handleNpmCopy = () => {
-    navigator.clipboard.writeText("npx create ned-app")
+    navigator.clipboard.writeText("npx create-ned-tech test-project")
       .then(() => {
         setNpmCopied(true);
         setTimeout(() => setNpmCopied(false), 2000); 
@@ -216,7 +216,7 @@ const Page = () => {
             onClick={handleNpmCopy}
           >
             <div>
-              <span className="text-green-400">$</span> <span className="text-gray-300">npx create ned-app</span>
+              <span className="text-green-400">$</span> <span className="text-gray-300">npx create-ned-tech test-project</span>
             </div>
             <button 
               aria-label={npmCopied ? "Copied" : "Copy to clipboard"} 
